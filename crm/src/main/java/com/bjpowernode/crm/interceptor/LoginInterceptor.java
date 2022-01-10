@@ -15,7 +15,8 @@ public class LoginInterceptor implements HandlerInterceptor {
     //控制器访问前的拦截方法
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
-        return false;
+        //所有请求全部放行
+        return true;
     }
     //控制器访问后的拦截方法
     @Override
