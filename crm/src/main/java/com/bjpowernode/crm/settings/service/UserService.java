@@ -1,0 +1,13 @@
+package com.bjpowernode.crm.settings.service;
+
+import com.bjpowernode.crm.settings.domain.User;
+
+import java.util.Map;
+
+public interface UserService {
+    //表示方法已过时 调用时会有删除线
+    @Deprecated
+    User findUserByLoginActAndLoginPwd(String loginAct, String loginPwd);
+
+    Map<String,Object> findUserByLoginActAndLoginPwdCondition(String loginAct, String md5Pwd,String ip);
+}

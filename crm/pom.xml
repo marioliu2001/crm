@@ -111,13 +111,22 @@
         </dependency>
 
         <!--生成get/set/toString方法,通过注解,打印日志信息-->
-        <dependency>
+        <!--<dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.12</version>
             <scope>provided</scope>
+        </dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok-maven-plugin -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok-maven-plugin</artifactId>
+            <version>1.18.12.0</version>
+            <scope>provided</scope>
         </dependency>
 
+        <!--日志信息-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -129,13 +138,13 @@
     <build>
         <resources>
             <resource>
-                <directory>src/main/java</directory><!--所在的目录-->
-                <includes><!--包括目录下的.properties,.xml文件都会扫描到-->
-                    <include>**/*.properties</include>
-                    <include>**/*.xml</include>
-                </includes>
-                <filtering>false</filtering>
-            </resource>
+            <directory>src/main/java</directory><!--所在的目录-->
+            <includes><!--包括目录下的.properties,.xml文件都会扫描到-->
+                <include>**/*.properties</include>
+                <include>**/*.xml</include>
+            </includes>
+            <filtering>false</filtering>
+        </resource>
         </resources>
         <plugins>
             <!-- 编码和编译和JDK版本 -->
