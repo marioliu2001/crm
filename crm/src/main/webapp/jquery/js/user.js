@@ -12,7 +12,6 @@
             $("#msg").html("用户名不能为空");
             return;
         }
-
         //获取密码
         var loginPwd = $("#loginPwd").val();
 
@@ -25,6 +24,10 @@
         $("#msg").html("");
         //$("#msg").css("color","#00FF00");
         //$("#msg").html("校验通过...");
+
+        //获取十天免登陆状态
+        var flag = $("#flag").val();
+
 
         $.ajax({
             //前端页面使用的是相对路径,不以/开头的路径
@@ -39,7 +42,8 @@
             data:{
                 //根据用户名和密码进行发送数据
                 "loginAct":loginAct,
-                "loginPwd":loginPwd
+                "loginPwd":loginPwd,
+                "flag":flag
             },
             type:"POST",
             dataType:"json",
@@ -50,7 +54,8 @@
                 //msg代表编码的含义,code返回0,代表操作成功,可以根据指定的msg提示信息,返回登录成功
                 //data代表页面中需要加载的数据,加载列表时,需要,登录操作不需要
                 if(data.code == 0){
-                    //操作成功
+                    //操作成功,跳转登陆页面
+                    window.location.href = "workbench/toIndex.do";
                 }else{
                     //操作失败,给出提示信息
                     //alert(data.msg);
@@ -60,4 +65,21 @@
             }
         })
     });
+}
+
+//设置十天免登录
+function autoLogin() {
+    $("#autoLogin").click(function () {
+        //获取复选框的选中状态
+        var ck = $("#autoLogin").prop("checked");
+        alert(ck);
+        //判断选中状态
+        if (ck){
+            //设置标记
+            $("#flag").val("a");
+        }else {
+            $("#flag").val("");
+        }
+    })
+
 }

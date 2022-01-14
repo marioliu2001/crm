@@ -32,7 +32,10 @@
     <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
+            <!--登陆操作放行-->
             <mvc:exclude-mapping path="/settings/user/login.do"/>
+            <!--跳转到登陆页面-->
+            <mvc:exclude-mapping path="/settings/user/toLogin.do"/>
             <bean class="com.bjpowernode.crm.interceptor.LoginInterceptor"/>
         </mvc:interceptor>
     </mvc:interceptors>

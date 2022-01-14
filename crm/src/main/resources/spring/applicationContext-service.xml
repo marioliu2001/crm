@@ -34,13 +34,13 @@
             -->
             <tx:method name="save*" isolation="DEFAULT" propagation="REQUIRED"
                        rollback-for="com.bjpowernode.crm.exception.AjaxRequestException,
-                       com.bjpowernode.crm.exception.TraditionRequestException" />
+                       com.bjpowernode.crm.exception.TranditionRequestException" />
             <tx:method name="update*" isolation="DEFAULT" propagation="REQUIRED"
                        rollback-for="com.bjpowernode.crm.exception.AjaxRequestException,
-                       com.bjpowernode.crm.exception.TraditionRequestException" />
+                       com.bjpowernode.crm.exception.TranditionRequestException" />
             <tx:method name="delete*" isolation="DEFAULT" propagation="REQUIRED"
                        rollback-for="com.bjpowernode.crm.exception.AjaxRequestException,
-                       com.bjpowernode.crm.exception.TraditionRequestException" />
+                       com.bjpowernode.crm.exception.TranditionRequestException" />
             <!--除了上面的方法以外的，其他方法-->
             <tx:method name="*" propagation="SUPPORTS" read-only="true" />
         </tx:attributes>

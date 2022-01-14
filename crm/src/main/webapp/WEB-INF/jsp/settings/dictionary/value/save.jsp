@@ -1,6 +1,11 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" isELIgnored="false" %>
+<%
+String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/";
+%>
 <!DOCTYPE html>
 <html>
 <head>
+	<base href="<%=basePath%>">
 <meta charset="UTF-8">
 
 <link href="../../../jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
@@ -12,9 +17,9 @@
 <body>
 
 	<div style="position:  relative; left: 30px;">
-		<h3>修改字典值</h3>
+		<h3>新增字典值</h3>
 	  	<div style="position: relative; top: -40px; left: 70%;">
-			<button type="button" class="btn btn-primary">更新</button>
+			<button type="button" class="btn btn-primary">保存</button>
 			<button type="button" class="btn btn-default" onclick="window.history.back();">取消</button>
 		</div>
 		<hr style="position: relative; top: -40px;">
@@ -22,30 +27,34 @@
 	<form class="form-horizontal" role="form">
 					
 		<div class="form-group">
-			<label for="edit-dicTypeCode" class="col-sm-2 control-label">字典类型编码</label>
+			<label for="create-dicTypeCode" class="col-sm-2 control-label">字典类型编码<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="edit-dicTypeCode" style="width: 200%;" value="性别" readonly>
+				<select class="form-control" id="create-dicTypeCode" style="width: 200%;">
+				  <option></option>
+				  <option>性别</option>
+				  <option>机构类型</option>
+				</select>
 			</div>
 		</div>
 		
 		<div class="form-group">
-			<label for="edit-dicValue" class="col-sm-2 control-label">字典值<span style="font-size: 15px; color: red;">*</span></label>
+			<label for="create-dicValue" class="col-sm-2 control-label">字典值<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="edit-dicValue" style="width: 200%;" value="m">
+				<input type="text" class="form-control" id="create-dicValue" style="width: 200%;">
 			</div>
 		</div>
 		
 		<div class="form-group">
-			<label for="edit-text" class="col-sm-2 control-label">文本</label>
+			<label for="create-text" class="col-sm-2 control-label">文本</label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="edit-text" style="width: 200%;" value="男">
+				<input type="text" class="form-control" id="create-text" style="width: 200%;">
 			</div>
 		</div>
 		
 		<div class="form-group">
-			<label for="edit-orderNo" class="col-sm-2 control-label">排序号</label>
+			<label for="create-orderNo" class="col-sm-2 control-label">排序号</label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="edit-orderNo" style="width: 200%;" value="1">
+				<input type="text" class="form-control" id="create-orderNo" style="width: 200%;">
 			</div>
 		</div>
 	</form>
