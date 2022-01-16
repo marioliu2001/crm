@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" isELIgnored="false" %>
 <%
 String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/";
@@ -11,6 +12,17 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 
 <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="jquery/js/dictionary.js"></script>
+	<script>
+        $(function () {
+
+            //全选和全不选
+            selectAll();
+
+            //反选
+			reverseAll();
+        });
+	</script>
 </head>
 <body>
 
@@ -23,7 +35,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 	</div>
 	<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;left: 30px;">
 		<div class="btn-group" style="position: relative; top: 18%;">
-		  <button type="button" class="btn btn-primary" onclick="window.location.href='save.jsp'"><span class="glyphicon glyphicon-plus"></span> 创建</button>
+		  <button type="button" class="btn btn-primary" onclick="window.location.href='settings/dictionary/toTypeSave.do'"><span class="glyphicon glyphicon-plus"></span> 创建</button>
 		  <button type="button" class="btn btn-default" onclick="window.location.href='edit.jsp'"><span class="glyphicon glyphicon-edit"></span> 编辑</button>
 		  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 		</div>
@@ -32,7 +44,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 		<table class="table table-hover">
 			<thead>
 				<tr style="color: #B3B3B3;">
-					<td><input type="checkbox" /></td>
+					<td><input type="checkbox" id="selectAllBtn"/></td>
 					<td>序号</td>
 					<td>编码</td>
 					<td>名称</td>
@@ -40,13 +52,15 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				</tr>
 			</thead>
 			<tbody>
-				<tr class="active">
-					<td><input type="checkbox" /></td>
-					<td>1</td>
-					<td>sex</td>
-					<td>性别</td>
-					<td>性别包括男和女</td>
-				</tr>
+				<c:forEach items="${typeList}" var="dt" varStatus="dts">
+					<tr class="${dts.index%2==0?'active':''}">
+						<td><input type="checkbox" name="ck"/></td>
+						<td>${dts.count}</td>
+						<td>${dt.code}</td>
+						<td>${dt.name}</td>
+						<td>${dt.description}</td>
+					</tr>
+				</c:forEach>
 			</tbody>
 		</table>
 	</div>

@@ -8,11 +8,19 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 	<base href="<%=basePath%>">
 <meta charset="UTF-8">
 
-<link href="../../../jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
-<link href="../../../jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
+<link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+<link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
 
-<script type="text/javascript" src="../../../jquery/jquery-1.11.1-min.js"></script>
-<script type="text/javascript" src="../../../jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
+<script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="jquery/js/dictionary.js"></script>
+    <script>
+        $(function () {
+
+            //加载主页面
+
+        })
+    </script>
 </head>
 <body>
 
@@ -25,7 +33,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 		<hr style="position: relative; top: -40px;">
 	</div>
 	<form class="form-horizontal" role="form">
-					
+
 		<div class="form-group">
 			<label for="create-dicTypeCode" class="col-sm-2 control-label">字典类型编码<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
@@ -36,21 +44,21 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				</select>
 			</div>
 		</div>
-		
+
 		<div class="form-group">
 			<label for="create-dicValue" class="col-sm-2 control-label">字典值<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
 				<input type="text" class="form-control" id="create-dicValue" style="width: 200%;">
 			</div>
 		</div>
-		
+
 		<div class="form-group">
 			<label for="create-text" class="col-sm-2 control-label">文本</label>
 			<div class="col-sm-10" style="width: 300px;">
 				<input type="text" class="form-control" id="create-text" style="width: 200%;">
 			</div>
 		</div>
-		
+
 		<div class="form-group">
 			<label for="create-orderNo" class="col-sm-2 control-label">排序号</label>
 			<div class="col-sm-10" style="width: 300px;">
@@ -58,7 +66,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			</div>
 		</div>
 	</form>
-	
+
 	<div style="height: 200px;"></div>
 </body>
 </html>
