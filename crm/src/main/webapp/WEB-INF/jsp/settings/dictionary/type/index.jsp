@@ -21,6 +21,12 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 
             //反选
 			reverseAll();
+
+			//更新操作
+            typeEdit();
+
+            //删除操作
+            batchDeleteDictionaryType();
         });
 	</script>
 </head>
@@ -35,9 +41,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 	</div>
 	<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;left: 30px;">
 		<div class="btn-group" style="position: relative; top: 18%;">
-		  <button type="button" class="btn btn-primary" onclick="window.location.href='settings/dictionary/toTypeSave.do'"><span class="glyphicon glyphicon-plus"></span> 创建</button>
-		  <button type="button" class="btn btn-default" onclick="window.location.href='edit.jsp'"><span class="glyphicon glyphicon-edit"></span> 编辑</button>
-		  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+		  <button type="button" class="btn btn-primary" onclick="window.location.href='settings/dictionary/saveDictionaryType.do'"><span class="glyphicon glyphicon-plus"></span> 创建</button>
+		  <button type="button" class="btn btn-default" id="typeEditBtn"><span class="glyphicon glyphicon-edit"></span> 编辑</button>
+		  <button type="button" class="btn btn-danger" id="batchDeleteDictionaryTypeBtn"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 		</div>
 	</div>
 	<div style="position: relative; left: 30px; top: 20px;">
@@ -54,7 +60,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			<tbody>
 				<c:forEach items="${typeList}" var="dt" varStatus="dts">
 					<tr class="${dts.index%2==0?'active':''}">
-						<td><input type="checkbox" name="ck"/></td>
+						<td><input type="checkbox" name="ck" value="${dt.code}"/></td>
 						<td>${dts.count}</td>
 						<td>${dt.code}</td>
 						<td>${dt.name}</td>

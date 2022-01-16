@@ -10,4 +10,10 @@ public interface DictionaryTypeDao {
     DictionaryType findByCode(String code);
 
     boolean insertDictionaryType(DictionaryType dictionaryType);
+
+    boolean update(DictionaryType dictionaryType);
+
+    boolean delete(String code);
+
+    boolean batchDeleteDictionaryTypeList(String[] codes);
 }
