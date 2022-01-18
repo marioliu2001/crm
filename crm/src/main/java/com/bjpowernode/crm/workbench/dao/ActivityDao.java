@@ -27,4 +27,10 @@ public interface ActivityDao {
 
     boolean insert(Activity activity);
 
+    Activity findActivityById(String id);
+
+    boolean updateActivityById(Activity activity);
+
+    boolean updateIsDeleteById(String activityId,String editBy,String editTime);
+
 }

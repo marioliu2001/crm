@@ -183,6 +183,13 @@ public class ActivityController {
                 .setTotalPages(totalPages);
     }
 
+    /**
+     * 添加一条市场活动
+     * @param activity
+     * @param session
+     * @return
+     * @throws AjaxRequestException
+     */
     @RequestMapping(value = "/saveActivity.do")
     @ResponseBody
     public R saActivity(Activity activity, HttpSession session) throws AjaxRequestException {
@@ -200,6 +207,64 @@ public class ActivityController {
         //添加成功
         return R.ok();
     }
+
+    /**
+     * 根据id查询一条市场活动-回显数据
+     * @param id
+     * @return
+     * @throws AjaxRequestException
+     */
+    @RequestMapping(value = "/getActivityById.do")
+    @ResponseBody
+    public R getActivityById(String id) throws AjaxRequestException {
+        //根据市场活动id查询一条市场活动
+        Activity activity = activityService.getActivityById(id);
+
+        //查询失败
+        if (ObjectUtils.isEmpty(activity))
+            throw new AjaxRequestException("查询失败...");
+
+        //查询成功
+        return R.ok(0,"查询成功",activity);
+    }
+
+    /**
+     * 根据id更新市场活动
+     * @param activity
+     * @return
+     * @throws AjaxRequestException
+     */
+    @RequestMapping(value = "/updateActivity.do")
+    @ResponseBody
+    public R updateActivity(Activity activity,HttpSession session) throws AjaxRequestException {
+        //获取修改人-就是登陆的用户
+        String editBy = ((User) session.getAttribute("user")).getName();
+        //获取修改时间
+        String editTime = DateTimeUtil.getSysTime();
+
+        //进行更新操作
+        boolean flag = activityService.updateActivityById(activity,editBy,editTime);
+        //更新失败
+        if (!flag)
+            throw new AjaxRequestException("更新失败...");
+        //更新成功
+        return R.ok(0,"更新成功");
+    }
+
+    @RequestMapping(value = "/batchDeleteActivity.do")
+    @ResponseBody
+    public R batchDeleteActivity(String[] activityIds, HttpSession session) throws AjaxRequestException {
+        //获取编辑人
+        String editBy = ((User) (session.getAttribute("user"))).getName();
+        //获取编辑时间
+        String editTime = DateTimeUtil.getSysTime();
+
+        //进行逻辑删除
+        activityService.batchDeleteActivityByIds(activityIds,editBy,editTime);
+
+        return R.ok();
+    }
 }
+
 
 

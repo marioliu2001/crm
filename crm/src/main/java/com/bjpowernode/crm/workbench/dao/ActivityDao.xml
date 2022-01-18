@@ -7,12 +7,26 @@
     <!--添加市场活动-->
     <insert id="insert">
         insert into tbl_activity
-        (id, owner, name, startDate, endDate, cost, description, createTime, createBy, editTime, editBy)
+        (id, owner, name, startDate, endDate, cost, description, createTime, createBy, editTime, editBy,isDelete)
         values (#{id},#{owner},#{name},#{startDate}
         ,#{endDate},#{cost},#{description},#{createTime}
-        ,#{createBy},#{editTime},#{editBy})
+        ,#{createBy},#{editTime},#{editBy},0)
     </insert>
-    <!--查询所有市场活动值-->
+    <!--根据id更新市场活动-->
+    <update id="updateActivityById">
+        update tbl_activity set
+        owner=#{owner},name=#{name},startDate=#{startDate},
+        endDate=#{endDate},cost=#{cost},description=#{description},
+        editBy=#{editBy},editTime=#{editTime}
+        where id=#{id}
+    </update>
+    <!--逻辑删除操作-->
+    <update id="updateIsDeleteById">
+        update tbl_activity  set
+        isDelete='1',editBy=#{param2},editTime=#{param3}
+        where id=#{param1}
+    </update>
+    <!--查询所有市场活动-->
     <select id="findAllActivityList" resultType="com.bjpowernode.crm.workbench.domain.Activity">
         select
         a.id,
@@ -80,7 +94,7 @@
         a.isDelete
         from tbl_activity a,tbl_user u
         <where>
-            a.owner = u.id
+            a.owner = u.id and a.isDelete = '0'
 
             <if test="name!=null and name!=''">
                 and a.name like '%' #{name} '%'
@@ -109,7 +123,7 @@
         count(*)
         from tbl_activity a,tbl_user u
           <where>
-              a.owner = u.id
+              a.owner = u.id and a.isDelete = '0'
 
               <if test="name!=null and name!=''">
                   and a.name like '%' #{name} '%'
@@ -124,6 +138,10 @@
                   and a.endDate = #{endDate}
               </if>
           </where>
+    </select>
+    <select id="findActivityById" resultType="com.bjpowernode.crm.workbench.domain.Activity">
+        select * from tbl_activity
+        where id=#{id}
     </select>
 
 

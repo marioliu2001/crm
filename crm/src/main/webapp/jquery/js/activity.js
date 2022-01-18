@@ -196,7 +196,7 @@ function searchActivityCondition() {
 
         //获取查询的条件，可以将它封装到分页查询的方法中
         //可以直接调用分页查询方法即可
-        getActivityListByPageComponentCondition(1,1);
+        getActivityListByPageComponentCondition(1,2);
     })
 }
 
@@ -243,8 +243,8 @@ function getActivityListByPageComponentCondition(pageNo,pageSize) {
 
                 $.each(data.data,function (i,n) {
                     html += '<tr class="active">';
-                    html += '<td><input type="checkbox" name="ck"/></td>';
-                    html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'detail.jsp\';">'+n.name+'</a></td>';
+                    html += '<td><input type="checkbox" value="'+n.id+'" name="ck"/></td>';
+                    html += '<td><a id="n_+'+n.id+'" style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'detail.jsp\';">'+n.name+'</a></td>';
                     html += '<td>'+n.owner+'</td>';
                     html += '<td>'+n.startDate+'</td>';
                     html += '<td>'+n.endDate+'</td>';
@@ -284,7 +284,7 @@ function getActivityListByPageComponentCondition(pageNo,pageSize) {
 }
 
 /**
- * 打开模态窗口
+ * 打开新增模态窗口
  */
 function openCreateActivityModal() {
     //点击创建按钮，加载所有用户下拉表，打开模态窗口
@@ -368,7 +368,7 @@ function saveActivity() {
             success:function (data) {
                 if (data.code==0){
                     //添加成功
-                    getActivityListByPageComponentCondition(1,1);
+                    getActivityListByPageComponentCondition(1,2);
                     $("#createActivityModal").modal("hide");
                 }else {
                     alert("添加失败,请刷新后再试...");
@@ -377,4 +377,206 @@ function saveActivity() {
             }
         })
     })
+}
+
+/**
+ * 修改操作-两次请求
+ */
+function openEditActivity() {
+    //修改按钮
+    $("#openEditActivityBtn").click(function () {
+        //判断用户是否选中一个进行修改
+        var cks = $("input[name=ck]:checked");
+        if (cks.length != 1){
+            alert("请选中一条进行修改...");
+            return;
+        }
+        //选中一条
+        //获取选中的唯一标识
+        var activityId = cks[0].value;
+        alert(activityId)
+        //判断
+
+        if (activityId == ""){
+            alert("当前页面异常，请刷新后再试...");
+            return;
+        }
+
+        //发送ajax请求
+        $.ajax({
+            url:"settings/user/getUserList.do",
+            data:{
+
+            },
+            dataType:"json",
+            type:"POST",
+            success:function (data) {
+                if (data.code==0){
+                    //回显数据
+                    var html = "";
+
+                    $.each(data.data,function (i,n) {
+                        //拼接字符串标签
+                        html += "<option value='"+n.id+"'>"+n.name+"</option>"
+                    });
+                    $("#edit-owner").html(html);
+                    console.log(html);
+
+
+                    //再次发送请求，根据activityId查询此条，市场活动数据
+                    $.ajax({
+                        url:"workbench/activity/getActivityById.do",
+                        data:{
+                          "id":activityId
+                        },
+                        dataType:"json",
+                        type:"POST",
+                        success:function (data) {
+                            if (data.code==0){
+                                //查询成功
+                                //回显数据
+                                $("#edit-name").val(data.data.name);
+                                $("#edit-startDate").val(data.data.startDate);
+                                $("#edit-endDate").val(data.data.endDate);
+                                $("#edit-cost").val(data.data.cost);
+                                $("#edit-description").val(data.data.description);
+
+                                //查询时,返回owner为32位的用户的id
+                                //在select标签的用户列表中,根据value属性,默认选中所有者
+                                $("#edit-owner").val(data.data.owner);
+
+                                //将市场活动id,存入到隐藏域中,方便后续的修改操作
+                                $("#edit-id").val(data.data.id);
+
+                                //打开模态窗口
+                                $("#editActivityModal").modal("show");
+                            }else {
+                                alert("操作异常，请刷新后重试...");
+                            }
+                        }
+                    })
+                }else {
+                    alert("当前页面异常，请刷新后再试...");
+                }
+            }
+        })
+
+    })
+}
+
+/**
+ * 更新操作
+ */
+function updateActivity() {
+   $("#updateActivityBtn").click(function () {
+       //获取信息
+       var owner = $("#edit-owner").val();
+       var name = $("#edit-name").val();
+       var startDate = $("#edit-startDate").val();
+       var endDate = $("#edit-endDate").val();
+       var cost = $("#edit-cost").val();
+       var description = $("#edit-description").val();
+
+       //获取市场活动id
+       var id = $("#edit-id").val();
+
+       //校验信息
+       if(id == ""){
+           alert("当前市场活动数据异常,请刷新后再试...");
+           return;
+       }
+
+       if (owner==""){
+           alert("所有者不能为空...");
+           return;
+       }
+
+       if (name==""){
+           alert("名称不能为空...");
+           return;
+       }
+
+       //发送ajax请求
+       $.ajax({
+           url:"workbench/activity/updateActivity.do",
+           data:{
+               "id":id,
+               "owner":owner,
+               "name":name,
+               "startDate":startDate,
+               "endDate":endDate,
+               "cost":cost,
+               "description":description,
+           },
+           dataType:"json",
+           type:"POST",
+           success:function (data) {
+               if (data.code==0) {
+                   //添加成功,刷新列表
+                   //停留在当前页面
+                   getActivityListByPageComponentCondition(
+                        $("#activityPage").bs_pagination("getOption","currentPage"),
+                        $("#activityPage").bs_pagination("getOption","rowsPerPage")
+                   )
+                   //关闭模态窗口
+                   $("#editActivityModal").modal("hide");
+               } else {
+                   alert("添加失败，请刷新后再试...");
+               }
+           }
+       })
+   })
+}
+
+/**
+ *逻辑删除操作
+ */
+function batchDeleteActivity() {
+    //获取按钮
+    $("#batchDeleteActivityBtn").click(function () {
+        //获取当前选中的复选框
+        var cks = $("input[name=ck]:checked");
+        //校验
+        if (cks.length==0){
+            alert("请选中所要删除的信息");
+            return;
+        }
+        //获取当前选中的id,拼接参数
+        var activityIds = "";
+        var activityNames = "";
+
+        for (var i = 0; i < cks.length; i++) {
+
+            //拼接当前选中的id
+            activityIds += "activityIds=" + cks[i].value;
+
+            //拼接提示信息
+            activityNames += $("#n_"+cks[i].value).html();
+            alert(activityNames);
+            if (i<cks.length-1){
+                activityIds += "&";
+                activityNames += " , "
+            }
+        }
+
+        if (confirm("你确定要删除数据吗")){
+            //发送ajax请求
+            $.ajax({
+                url:"workbench/activity/batchDeleteActivity.do?"+activityIds,
+                data:{
+
+                },
+                dataType:"json",
+                type:"POST",
+                success:function (data) {
+                    if (data.code==0){
+                        //删除成功，刷新数据
+                        getActivityListByPageComponentCondition(1,2)
+                    } else {
+                        alert("删除失败，请刷新后重试...");
+                    }
+                }
+            })
+        }
+    });
 }

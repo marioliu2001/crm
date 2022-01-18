@@ -59,4 +59,27 @@ public class ActivityServiceImpl implements ActivityService {
             throw new AjaxRequestException("添加失败...");
         return true;
     }
+
+    @Override
+    public Activity getActivityById(String id) {
+        return activityDao.findActivityById(id);
+    }
+
+    @Override
+    public boolean updateActivityById(Activity activity, String editBy, String editTime) {
+        activity.setEditBy(editBy)
+                .setEditTime(editTime);
+        return activityDao.updateActivityById(activity);
+    }
+
+    @Override
+    public void batchDeleteActivityByIds(String[] activityIds, String editBy, String editTime) throws AjaxRequestException {
+        for (String activityId : activityIds) {
+            boolean flag = activityDao.updateIsDeleteById(activityId,editBy,editTime);
+
+            if (!flag)
+                throw new AjaxRequestException("逻辑删除失败...");
+        }
+    }
+
 }

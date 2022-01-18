@@ -60,4 +60,26 @@ public interface ActivityService {
      */
     boolean saveActivity(Activity activity, String createBy, String createTime) throws AjaxRequestException;
 
+    /**
+     * 根据id查询市场活动
+     * @param id
+     * @return
+     */
+    Activity getActivityById(String id);
+
+    /**
+     * 根据id更新市场活动
+     * @param activity
+     * @param editBy
+     * @param editTime
+     * @return
+     */
+    boolean updateActivityById(Activity activity, String editBy, String editTime);
+
+    /**
+     *逻辑删除操作
+     * @param activityIds
+     */
+    void batchDeleteActivityByIds(String[] activityIds,String editBy,String editTime) throws AjaxRequestException;
+
 }
