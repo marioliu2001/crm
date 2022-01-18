@@ -17,8 +17,11 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
     <script>
         $(function () {
 
-            //加载主页面
+            //加载字典 类型编码
+			getDictionaryTypeList();
 
+			//新增字典值
+            saveDictionaryValue();
         })
     </script>
 </head>
@@ -27,7 +30,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 	<div style="position:  relative; left: 30px;">
 		<h3>新增字典值</h3>
 	  	<div style="position: relative; top: -40px; left: 70%;">
-			<button type="button" class="btn btn-primary">保存</button>
+			<button type="button" class="btn btn-primary" id="saveDictionaryValueBtn">保存</button>
 			<button type="button" class="btn btn-default" onclick="window.history.back();">取消</button>
 		</div>
 		<hr style="position: relative; top: -40px;">
@@ -37,10 +40,11 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 		<div class="form-group">
 			<label for="create-dicTypeCode" class="col-sm-2 control-label">字典类型编码<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
-				<select class="form-control" id="create-dicTypeCode" style="width: 200%;">
-				  <option></option>
+				<select class="form-control" id="create-TypeCode" style="width: 200%;">
+					<%--去js中动态加载了--%>
+				  <%--<option></option>
 				  <option>性别</option>
-				  <option>机构类型</option>
+				  <option>机构类型</option>--%>
 				</select>
 			</div>
 		</div>
@@ -48,7 +52,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 		<div class="form-group">
 			<label for="create-dicValue" class="col-sm-2 control-label">字典值<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="create-dicValue" style="width: 200%;">
+				<input type="text" class="form-control" id="create-value" style="width: 200%;">
 			</div>
 		</div>
 

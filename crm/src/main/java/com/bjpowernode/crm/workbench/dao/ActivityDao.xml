@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bjpowernode.crm.workbench.dao.ActivityDao">
+    <!--添加市场活动-->
+    <insert id="insert">
+        insert into tbl_activity
+        (id, owner, name, startDate, endDate, cost, description, createTime, createBy, editTime, editBy)
+        values (#{id},#{owner},#{name},#{startDate}
+        ,#{endDate},#{cost},#{description},#{createTime}
+        ,#{createBy},#{editTime},#{editBy})
+    </insert>
+    <!--查询所有市场活动值-->
+    <select id="findAllActivityList" resultType="com.bjpowernode.crm.workbench.domain.Activity">
+        select
+        a.id,
+        u.name as owner,
+        a.name ,
+        a.startDate ,
+        a.endDate ,
+        a.cost ,
+        a.description ,
+        a.createTime ,
+        a.createBy ,
+        a.editTime ,
+        a.editBy ,
+        a.isDelete
+        from tbl_activity a,tbl_user u
+        where a.owner=u.id
+    </select>
+
+    <!--分页查询市场活动列表-->
+    <select id="findAllByPage" resultType="com.bjpowernode.crm.workbench.domain.Activity">
+        select
+        a.id,
+        u.name as owner,
+        a.name ,
+        a.startDate ,
+        a.endDate ,
+        a.cost ,
+        a.description ,
+        a.createTime ,
+        a.createBy ,
+        a.editTime ,
+        a.editBy ,
+        a.isDelete
+        from tbl_activity a,tbl_user u
+        where a.owner=u.id
+        limit #{pageNo},#{pageSize}
+    </select>
+    <!--查询总页数-->
+    <select id="findTotalCounts" resultType="java.lang.Long">
+          select
+          count(*)
+          from tbl_activity a,tbl_user u
+          where a.owner=u.id
+    </select>
+    <!--获取市场活动列表数据-分页查询-加载前端分页组件-条件过滤查询-->
+    <!--List<Activity> findAllByPageCondition(@Param("pageNo") int pageNoIndex,
+                                          @Param("pageSize") Integer pageSize,
+                                          @Param("name") String activityName,
+                                          @Param("username") String username,
+                                          @Param("startDate") String startDate,
+                                          @Param("endDate") String endDate);-->
+    <select id="findAllByPageCondition" resultType="com.bjpowernode.crm.workbench.domain.Activity">
+        select
+        a.id,
+        u.name as owner,
+        a.name ,
+        a.startDate ,
+        a.endDate ,
+        a.cost ,
+        a.description ,
+        a.createTime ,
+        a.createBy ,
+        a.editTime ,
+        a.editBy ,
+        a.isDelete
+        from tbl_activity a,tbl_user u
+        <where>
+            a.owner = u.id
+
+            <if test="name!=null and name!=''">
+                and a.name like '%' #{name} '%'
+            </if>
+
+            <if test="username!=null and username!=''">
+                and u.name = #{username}
+            </if>
+
+            <if test="startDate!=null and startDate!=''">
+                and a.startDate &gt;= #{startDate}
+            </if>
+
+            <if test="endDate!=null and endDate!=''">
+                and a.endDate &lt;= #{endDate}
+            </if>
+        </where>
+        limit #{pageNo},#{pageSize}
+    </select>
+    <!--long findActivityTotalCountCondition(@Param("name") String activityName,
+                                         @Param("username") String username,
+                                         @Param("startDate") String startDate,
+                                         @Param("endDate") String endDate);-->
+    <select id="findActivityTotalCountCondition" resultType="java.lang.Long">
+        select
+        count(*)
+        from tbl_activity a,tbl_user u
+          <where>
+              a.owner = u.id
+
+              <if test="name!=null and name!=''">
+                  and a.name like '%' #{name} '%'
+              </if>
+              <if test="username!=null and username!=''">
+                  and u.username = #{username}
+              </if>
+              <if test="startDate!=null and startDate!=''">
+                  and a.startDate = #{startDate}
+              </if>
+              <if test="endDate!=null and endDate!=''">
+                  and a.endDate = #{endDate}
+              </if>
+          </where>
+    </select>
+
+
+</mapper>

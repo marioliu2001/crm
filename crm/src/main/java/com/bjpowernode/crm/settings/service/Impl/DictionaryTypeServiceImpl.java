@@ -6,6 +6,7 @@ import com.bjpowernode.crm.settings.dao.DictionaryValueDao;
 import com.bjpowernode.crm.settings.domain.DictionaryType;
 import com.bjpowernode.crm.settings.domain.DictionaryValue;
 import com.bjpowernode.crm.settings.service.DictionaryTypeService;
+import com.bjpowernode.crm.utils.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -89,5 +90,16 @@ public class DictionaryTypeServiceImpl implements DictionaryTypeService {
     @Override
     public List<DictionaryValue> getDictionaryValueList() {
         return dictionaryValueDao.findAll();
+    }
+
+    @Override
+    public boolean saveDictionaryValue(DictionaryValue dictionaryValue) throws AjaxRequestException {
+        //引入工具类给dictionaryValue添加id值
+        dictionaryValue.setId(UUIDUtil.getUUID());
+        //新增操作
+        boolean flag = dictionaryValueDao.insert(dictionaryValue);
+        if (!flag)
+            throw new AjaxRequestException("添加失败,请重试");
+        return true;
     }
 }

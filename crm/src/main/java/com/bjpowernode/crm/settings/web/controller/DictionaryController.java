@@ -219,7 +219,10 @@ public class DictionaryController {
         return "/settings/dictionary/value/index";
     }
 
-
+    /**
+     * 显示字典值主页面
+     * @return
+     */
     @RequestMapping(value = "/value/getDictionaryValueList.do")
     @ResponseBody
     public Map<String, Object> getDictionaryValueList() {
@@ -239,4 +242,49 @@ public class DictionaryController {
         resultMap.put("data",dictionaryValuesList);
         return resultMap;
     }
+
+    /**
+     * 跳转到字典值增加页面
+     * @return
+     */
+    @RequestMapping(value = "/value/toSave.do")
+    public String toSave(){
+        return "/settings/dictionary/value/save";
+    }
+
+    @RequestMapping(value = "/value/getDictionaryTypeList.do")
+    @ResponseBody
+    public Map<String,Object> getDictionaryTypeList() throws AjaxRequestException {
+        //从数据库中查询typeList
+        List<DictionaryType> dictionaryTypesList = typeService.findAllDictionaryType();
+        if (ObjectUtils.isEmpty(dictionaryTypesList)){
+            //没查询出来
+            throw new AjaxRequestException("查询失败，请重试");
+        }
+        Map<String,Object> resultMap =new HashMap<>();
+        resultMap.put("code",0);
+        resultMap.put("msg","查询成功");
+        resultMap.put("data",dictionaryTypesList);
+        return resultMap;
+    }
+
+    /**
+     * 字典值新增操作
+     * @return
+     */
+    @RequestMapping(value = "/value/saveDictionaryValue.do")
+    @ResponseBody
+    public Map<String,Object> saveDictionaryValue(DictionaryValue dictionaryValue) throws AjaxRequestException {
+        boolean flag = typeService.saveDictionaryValue(dictionaryValue);
+        if (!flag)
+            throw new AjaxRequestException("添加失败，请重试");
+        Map<String,Object> resultMap = new HashMap<>();
+        resultMap.put("code",0);
+        resultMap.put("msg", "添加成功");
+        return resultMap;
+    }
+
+
 }
+
+

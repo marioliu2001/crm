@@ -312,3 +312,88 @@ function reverseValueAll() {
             $("input[name=ck]").length == $("input[name=ck]:checked").length)
     })
 }
+
+//在字典值界面中加载字典类型编码
+function getDictionaryTypeList() {
+    //通过异步加载数据
+    $.ajax({
+        url:"settings/dictionary/value/getDictionaryTypeList.do",
+        data:{
+
+        },
+        dataType:"json",
+        type:"POST",
+        success:function (data) {
+            //判断
+            if (data.code==0) {
+                //查询成功
+                //定义字符串标签
+                var html = "";
+                $.each(data.data,function (i,n) {
+                    //将页面加载的标签内容封装到字符串标签中
+                    //将字符串标签的内容替换为动态数据
+                    if (i==0)
+                        html+= "<option></option>";
+
+                    //通过双引号进行数据的嵌套
+                    html += "<option value='"+n.code+"'>"+n.name+"</option>"
+
+                    //通过单引号进行数据的嵌套
+                    //html += '<option value="'+data.code+'">'+data.name+'</option>'
+                });
+                $("#create-TypeCode").html(html);
+            } else {
+                //查询失败，提示信息
+                alert(data.msg);
+            }
+        }
+    })
+}
+
+//新增字典值
+function saveDictionaryValue() {
+    $("#saveDictionaryValueBtn").click(function () {
+        //获取字典类型编码，字典值，文本，排序号
+
+        var typeCode = $("#create-TypeCode").val();
+
+        var value = $("#create-value").val();
+
+        var text = $("#create-text").val();
+
+        var orderNo = $("#create-orderNo").val();
+
+        //校验编码，字典值
+
+        if (typeCode == ""){
+            alert("编码不能为空");
+            return;
+        }
+        if (value == ""){
+            alert("字典值不能为空");
+            return;
+        }
+
+        //发送ajax请求
+        $.ajax({
+            url:"settings/dictionary/value/saveDictionaryValue.do",
+            data:{
+                "typeCode":typeCode,
+                "value":value,
+                "text":text,
+                "orderNo":orderNo
+            },
+            dataType:"json",
+            type:"POST",
+            success:function (data) {
+                if (data.code==0){
+                    //添加成功
+                    alert("添加成功");
+                    window.location.href = "settings/dictionary/type/getDictionaryValueList.do";
+                } else {
+                    alert(data.msg);
+                }
+            }
+        })
+    });
+}

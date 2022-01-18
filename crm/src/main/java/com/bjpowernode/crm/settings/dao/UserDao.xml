@@ -8,5 +8,8 @@
     <select id="findUserByLoginActAndLoginPwd" resultType="com.bjpowernode.crm.settings.domain.User">
         select * from tbl_user where loginAct = #{param1} and loginPwd = #{param2}
     </select>
+    <select id="findAll" resultType="com.bjpowernode.crm.settings.domain.User">
+        select * from tbl_user
+    </select>
 
 </mapper>

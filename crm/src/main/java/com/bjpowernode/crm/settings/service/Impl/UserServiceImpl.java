@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -102,5 +103,11 @@ public class UserServiceImpl implements UserService {
         resultMap.put("data", user);
         return resultMap;
     }
+
+    @Override
+    public List<User> findUserList() {
+        return userDao.findAll();
+    }
+
 
 }

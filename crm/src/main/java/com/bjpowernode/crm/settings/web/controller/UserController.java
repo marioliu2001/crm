@@ -1,5 +1,7 @@
 package com.bjpowernode.crm.settings.web.controller;
 
+import com.bjpowernode.crm.entity.R;
+import com.bjpowernode.crm.exception.AjaxRequestException;
 import com.bjpowernode.crm.exception.LoginException;
 import com.bjpowernode.crm.settings.domain.User;
 import com.bjpowernode.crm.settings.service.UserService;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -60,20 +63,23 @@ private UserService userService;
             }
         }
 
-        //拿到ip地址
-        String ip = request.getRemoteAddr();
+        //不要忘记判断 不然跳转不到登陆页面
+        if (!StringUtils.isNullOrEmpty(loginAct) && !StringUtils.isNullOrEmpty(loginPwd)){
+            //拿到ip地址
+            String ip = request.getRemoteAddr();
 
-        //设置user
-        Map<String, Object> resultMap = userService.findUserByLoginActAndLoginPwdCondition(loginAct, loginPwd, ip);
+            //设置user
+            Map<String, Object> resultMap = userService.findUserByLoginActAndLoginPwdCondition(loginAct, loginPwd, ip);
 
-        User user = (User) resultMap.get("data");
+            User user = (User) resultMap.get("data");
 
-        if (!ObjectUtils.isEmpty(user)){
-            //登陆成功，将session中的user更新
-            request.getSession().setAttribute("user",user);
+            if (!ObjectUtils.isEmpty(user)){
+                //登陆成功，将session中的user更新
+                request.getSession().setAttribute("user",user);
 
-            //重定向到首页面
-            return "redirect:/workbench/toIndex.do";
+                //重定向到首页面
+                return "redirect:/workbench/toIndex.do";
+            }
         }
         //拼接试图解析器的前缀+返回值+后缀名称，找到响应的jsp
         // 前缀 = /WEB-INF/jsp
@@ -163,4 +169,16 @@ private UserService userService;
 
         return resultMap;
   }
+
+    @RequestMapping(value = "/getUserList.do")
+    @ResponseBody
+    public R getUserList() throws AjaxRequestException {
+
+        //查询用户列表
+        List<User> userList = userService.findUserList();
+
+        if (ObjectUtils.isEmpty(userList))
+            throw new AjaxRequestException("查询异常...");
+        return R.ok(0,"查询成功",userList);
+    }
 }

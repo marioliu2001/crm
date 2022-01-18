@@ -20,4 +20,6 @@ public interface DictionaryTypeService {
     List<String> batchDeleteDictionaryTypeCondition(String[] codes) throws AjaxRequestException;
 
     List<DictionaryValue> getDictionaryValueList();
+
+    boolean saveDictionaryValue(DictionaryValue dictionaryValue) throws AjaxRequestException;
 }

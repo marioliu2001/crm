@@ -3,6 +3,7 @@ package com.bjpowernode.crm.settings.service;
 import com.bjpowernode.crm.exception.LoginException;
 import com.bjpowernode.crm.settings.domain.User;
 
+import java.util.List;
 import java.util.Map;
 
 public interface UserService {
@@ -11,4 +12,7 @@ public interface UserService {
     User findUserByLoginActAndLoginPwd(String loginAct, String loginPwd);
 
     Map<String,Object> findUserByLoginActAndLoginPwdCondition(String loginAct, String md5Pwd,String ip) throws LoginException;
+
+    List<User> findUserList();
+
 }
