@@ -18,4 +18,8 @@
     <select id="findAll" resultType="com.bjpowernode.crm.settings.domain.DictionaryValue">
         select * from tbl_dic_value
     </select>
+    <select id="findAllByTypeCode" resultType="com.bjpowernode.crm.settings.domain.DictionaryValue">
+        select * from tbl_dic_value
+        where typeCode=#{code}
+    </select>
 </mapper>

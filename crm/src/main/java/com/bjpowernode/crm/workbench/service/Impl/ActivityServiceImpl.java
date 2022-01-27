@@ -1,9 +1,12 @@
 package com.bjpowernode.crm.workbench.service.Impl;
 
 import com.bjpowernode.crm.exception.AjaxRequestException;
+import com.bjpowernode.crm.exception.TranditionRequestException;
 import com.bjpowernode.crm.utils.UUIDUtil;
 import com.bjpowernode.crm.workbench.dao.ActivityDao;
+import com.bjpowernode.crm.workbench.dao.ActivityRemarkDao;
 import com.bjpowernode.crm.workbench.domain.Activity;
+import com.bjpowernode.crm.workbench.domain.ActivityRemark;
 import com.bjpowernode.crm.workbench.service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,8 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Autowired
     private ActivityDao activityDao;
+    @Autowired
+    private ActivityRemarkDao activityRemarkDao;
 
     @Override
     public List<Activity> getActivityList() {
@@ -80,6 +85,51 @@ public class ActivityServiceImpl implements ActivityService {
             if (!flag)
                 throw new AjaxRequestException("逻辑删除失败...");
         }
+    }
+
+    @Override
+    public void saveActivityList(List<Activity> activityList) throws TranditionRequestException {
+        for (Activity activity : activityList) {
+            boolean flag = activityDao.insert(activity);
+
+            if (!flag)
+                throw new TranditionRequestException("批量导入失败...");
+        }
+    }
+
+    @Override
+    public List<Activity> findActivityList() {
+        return activityDao.findAllByIsDelete();
+    }
+
+    @Override
+    public List<Activity> exportActivityByIds(String[] activityIds) {
+        return activityDao.exportActivityByIds(activityIds);
+    }
+
+    @Override
+    public Activity findActivityById(String id) {
+        return activityDao.findOneActivityById(id);
+    }
+
+    @Override
+    public List<ActivityRemark> findActivityRemarkList(String activityId) {
+        return activityDao.findActivityRemarkList(activityId);
+    }
+
+    @Override
+    public boolean saveActivityRemark(ActivityRemark activityRemark) {
+        return activityDao.saveActivityRemark(activityRemark);
+    }
+
+    @Override
+    public boolean updateRemark(String remarkId, String noteContent, String editBy, String editTime) {
+        return activityDao.updateRemark(remarkId,noteContent,editBy,editTime);
+    }
+
+    @Override
+    public boolean deleteRemarkById(String remarkId) {
+        return activityRemarkDao.deleteRemarkById(remarkId);
     }
 
 }

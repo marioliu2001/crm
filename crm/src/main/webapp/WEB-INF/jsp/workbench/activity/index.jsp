@@ -19,6 +19,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 	<link rel="stylesheet" type="text/css" href="jquery/bs_pagination/jquery.bs_pagination.min.css">
 	<script type="text/javascript" src="jquery/bs_pagination/jquery.bs_pagination.min.js"></script>
 	<script type="text/javascript" src="jquery/bs_pagination/en.js"></script>
+	<%--js代码--%>
 <script type="text/javascript" src="jquery/js/activity.js"></script>
 <script type="text/javascript">
     $(function () {
@@ -52,7 +53,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
         openCreateActivityModal();
 
         //新增操作
-        saveActivity();
+        //saveActivity();
 
         //修改操作-打开模态窗口
         openEditActivity();
@@ -62,6 +63,15 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 
         //逻辑删除操作
         batchDeleteActivity();
+
+        //批量上传操作
+        importActivity();
+
+		//批量导出操作
+        exportActivityAll();
+
+        //选择导出
+        exportActivityXz();
 
     });
 
@@ -224,9 +234,20 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                     <div style="position: relative;top: 20px; left: 50px;">
                         请选择要上传的文件：<small style="color: gray;">[仅支持.xls或.xlsx格式]</small>
                     </div>
+
+
+
                     <div style="position: relative;top: 40px; left: 50px;">
-                        <input type="file" id="activityFile">
+
+						<form id="uploadForm" action="workbench/activity/importActivity.do"
+							  method="post"
+							  enctype="multipart/form-data">
+							<input type="file" name="activityFile" id="activityFile">
+						</form>
+
                     </div>
+
+
                     <div style="position: relative; width: 400px; height: 320px; left: 45% ; top: -40px;" >
                         <h3>重要提示</h3>
                         <ul>

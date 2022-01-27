@@ -63,7 +63,7 @@ function getActivityListByPage(pageNo,pageSize) {
                     html += '<td>'+n.startDate+'</td>';
                     html += '<td>'+n.endDate+'</td>';
                     html += '</tr>';
-                })
+                });
                 $("#activityListBody").html(html);
             } else {
                 //加载失败
@@ -128,7 +128,7 @@ function getActivityListByPageComponent(pageNo,pageSize) {
                     html += '<td>'+n.startDate+'</td>';
                     html += '<td>'+n.endDate+'</td>';
                     html += '</tr>';
-                })
+                });
                 $("#activityListBody").html(html);
 
                 //当数据异步加载完成后，初始化页面分页组件
@@ -244,7 +244,7 @@ function getActivityListByPageComponentCondition(pageNo,pageSize) {
                 $.each(data.data,function (i,n) {
                     html += '<tr class="active">';
                     html += '<td><input type="checkbox" value="'+n.id+'" name="ck"/></td>';
-                    html += '<td><a id="n_+'+n.id+'" style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'detail.jsp\';">'+n.name+'</a></td>';
+                    html += '<td><a id="n_+'+n.id+'" style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/activity/toDetail.do?id='+n.id+'\';">'+n.name+'</a></td>';
                     html += '<td>'+n.owner+'</td>';
                     html += '<td>'+n.startDate+'</td>';
                     html += '<td>'+n.endDate+'</td>';
@@ -394,7 +394,7 @@ function openEditActivity() {
         //选中一条
         //获取选中的唯一标识
         var activityId = cks[0].value;
-        alert(activityId)
+        alert(activityId);
         //判断
 
         if (activityId == ""){
@@ -580,3 +580,278 @@ function batchDeleteActivity() {
         }
     });
 }
+
+/**
+ * 文件上传
+ */
+function importActivity() {
+    $("#importActivityBtn").click(function () {
+
+        //给导入按钮添加点击事件，点击后提交表单数据
+        $("#uploadForm").submit();
+    })
+}
+
+/**
+ * 批量导出
+ */
+function exportActivityAll() {
+    $("#exportActivityAllBtn").click(function () {
+
+        if (confirm("您确定到全部导出吗？")){
+            //点击确定，发送传统请求
+            window.location.href = "workbench/activity/exportActivityAll.do"
+        }
+    })
+}
+
+/**
+ * 选择导出
+ */
+function exportActivityXz() {
+    $("#exportActivityXzBtn").click(function () {
+        //选中的复选框
+        var cks = $("input[name=ck]:checked");
+        //判断
+        if (cks.length == 0) {
+            alert("请选中要导出的数据");
+            return;
+        }
+
+        //校验通过
+        //拼接参数
+        var params = "";
+        for (var i = 0; i < cks.length; i++) {
+            params += "activityIds="+cks[i].value;
+            if (i<cks.length-1)
+                params+="&";
+        }
+
+
+
+        window.location.href="workbench/activity/exportActivityXz.do?"+params;
+    })
+}
+
+/**
+ * 加载备注信息
+ */
+function getActivityRemarkList() {
+
+    //根据市场活动的id,进行获取列表操作
+    var id = $("#activityId").val();
+
+    if(id == ""){
+        alert("当前页面数据加载异常,请刷新后再试...");
+        return;
+    }
+
+    //校验通过
+    $.ajax({
+        url:"workbench/activity/getActivityRemarkList.do",
+        data:{
+            "activityId":id
+        },
+        type:"POST",
+        dataType:"json",
+        success:function(data) {
+            //data : {code:0/1,msg:xxx,data:[{市场活动备注信息}]}
+            if(data.code == 0){
+                //异步加载市场活动备注信息列表
+                var html = "";
+
+                $.each(data.data,function (i, n) {
+                    html += '<div class="remarkDiv" style="height: 60px;">';
+                    html += '<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">';
+                    html += '<div style="position: relative; top: -40px; left: 40px;" >';
+                    html += '<h5 id="n_'+n.id+'">'+n.noteContent+'</h5>';
+                    html += '<font color="gray">市场活动</font> <font color="gray">-</font> <b>'+$("#activityName").val()+'</b> <small style="color: gray;"> '+(n.editFlag==0?n.createTime:n.editTime)+' 由 '+(n.editFlag==0?n.createBy:n.editBy)+'</small>';
+                    html += '<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">';
+                    html += '<a onclick="openEditRemarkModal(\''+n.id+'\')" class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>';
+                    html += '&nbsp;&nbsp;&nbsp;&nbsp;';
+                    html += '<a onclick="deleteRemark(\''+n.id+'\')" class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>';
+                    html += '</div>';
+                    html += '</div>';
+                    html += '</div>';
+                })
+                $("#activityRemarkListBody").html(html);
+            }else {
+                alert("数据加载异常，请刷新后再试...");
+            }
+        }
+    })
+}
+
+/**
+ * 恢复备注信息按钮事件
+ */
+function resetBindingEvent() {
+    /*
+        鼠标悬停事件
+        $(".remarkDiv").mouseover(function(){
+			$(this).children("div").children("div").show();
+		});
+        鼠标移出事件
+		$(".remarkDiv").mouseout(function(){
+			$(this).children("div").children("div").hide();
+		});
+        鼠标悬停事件
+		$(".myHref").mouseover(function(){
+			$(this).children("span").css("color","red");
+		});
+        鼠标移出事件
+		$(".myHref").mouseout(function(){
+			$(this).children("span").css("color","#E6E6E6");
+		});
+     */
+
+    //通过父标签给子标签添加事件
+    $("#activityRemarkListBody").on("mouseover",".remarkDiv",function () {
+        $(this).children("div").children("div").show();
+    });
+
+    $("#activityRemarkListBody").on("mouseout",".remarkDiv",function () {
+        $(this).children("div").children("div").hide();
+    });
+    $("#activityRemarkListBody").on("mouseover",".myHref",function () {
+        $(this).children("span").css("color","red");
+    });
+    $("#activityRemarkListBody").on("mouseout",".myHref",function () {
+        $(this).children("span").css("color","#E6E6E6");
+    });
+}
+
+/**
+ * 新增备注信息
+ */
+function saveActivityRemark() {
+    $("#saveActivityRemarkBtn").click(function () {
+        //获得activityId值
+        var activityId = $("#activityId").val();
+
+        //获取用户输入备注信息
+        var noteContent =  $("#remark").val();
+
+        //校验
+        if (activityId==""){
+            alert("当前数据异常，请刷新后再试...");
+            return;
+        }
+
+        if (noteContent==""){
+            alert("请输入备注信息再添加...");
+            return;
+        }
+
+        //校验通过，发送ajax请求
+        $.ajax({
+            url: "workbench/activity/remark/saveActivityRemark.do",
+            data: {
+                "activityId": activityId,
+                "noteContent":noteContent
+            },
+            dataType: "json",
+            type:"POST",
+            success:function (data) {
+                if (data.code==0){
+                    //新增成功，刷新页面
+                    getActivityRemarkList();
+                    //清空文本域中的内容
+                    $("#remark").val("");
+                }else {
+                    alert("添加失败，请刷新后再试...");
+                }
+            }
+        });
+    })
+}
+
+/**
+ * 备注信息修改
+ */
+function openEditRemarkModal(remarkId) {
+
+    if (remarkId==""){
+        alert("当前数据加载异常，请刷新后再试...");
+        return;
+    }
+
+    //存入到隐藏域中
+    $("#remarkId").val(remarkId);
+
+    //回显数据
+    var noteContent =  $("#n_"+remarkId).html();
+
+    $("#noteContent").val(noteContent);
+
+    //打开模态窗口
+    $("#editRemarkModal").modal("show");
+}
+
+/**
+ * 修改操作
+ */
+function updateRemark() {
+    $("#updateRemarkBtn").click(function () {
+        //从隐藏域中获取id
+        var remarkId = $("#remarkId").val();
+
+        //获取用户输入的内容
+        var newNoteContent = $("#noteContent").val();
+
+        //原来的备注信息
+        var oldNoteContent = $("#n_"+remarkId).html();
+
+        //校验用户是否更改信息
+        if (newNoteContent == oldNoteContent){
+            alert("无信息更改，请检查后再提交");
+            return;
+        }
+        //校验通过，发送ajax请求
+        $.ajax({
+            url:"workbench/activity/remark/updateRemark.do",
+            data:{
+                "remarkId":remarkId,
+                "noteContent":newNoteContent
+            },
+            type:"POST",
+            dataType:"json",
+            success:function (data) {
+                if (data.code == 0){
+                    //更新成功，刷新列表
+                    getActivityRemarkList();
+                    //关闭模态窗口
+                    $("#editRemarkModal").modal("hide");
+                }else {
+                    alert("更新失败，刷新后再试...");
+                }
+            }
+        })
+    })
+}
+
+function deleteRemark(remarkId) {
+    if (remarkId==""){
+        alert("当前数据异常，请刷新后再试...");
+        return;
+    }
+    if (confirm("您确定要删除这个数据吗？")){
+        $.ajax({
+            url:"workbench/activity/remark/deleteRemarkById.do",
+            data:{
+                "remarkId":remarkId
+            },
+            dataType:"json",
+            type:"POST",
+            success:function (data) {
+                if (data.code==0){
+                    //删除成功,刷新列表
+                    getActivityRemarkList();
+                }else {
+                    alert("删除失败，请刷新后再试...");
+                }
+            }
+        })
+    }
+}
+

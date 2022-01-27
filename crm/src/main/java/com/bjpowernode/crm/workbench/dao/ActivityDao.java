@@ -1,6 +1,7 @@
 package com.bjpowernode.crm.workbench.dao;
 
 import com.bjpowernode.crm.workbench.domain.Activity;
+import com.bjpowernode.crm.workbench.domain.ActivityRemark;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -32,5 +33,21 @@ public interface ActivityDao {
     boolean updateActivityById(Activity activity);
 
     boolean updateIsDeleteById(String activityId,String editBy,String editTime);
+
+    List<Activity> findAllByIsDelete();
+
+
+    List<Activity> exportActivityByIds(String[] activityIds);
+
+    Activity findOneActivityById(String id);
+
+    List<ActivityRemark> findActivityRemarkList(String activityId);
+
+    boolean saveActivityRemark(ActivityRemark activityRemark);
+
+    boolean updateRemark(@Param("remarkId") String remarkId,
+                         @Param("noteContent") String noteContent,
+                         @Param("editBy") String editBy,
+                         @Param("editTime") String editTime);
 
 }

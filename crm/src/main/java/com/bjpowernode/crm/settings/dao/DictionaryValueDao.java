@@ -11,4 +11,6 @@ public interface DictionaryValueDao {
     List<DictionaryValue> findAll();
 
     boolean insert(DictionaryValue dictionaryValue);
+
+    List<DictionaryValue> findAllByTypeCode(String code);
 }

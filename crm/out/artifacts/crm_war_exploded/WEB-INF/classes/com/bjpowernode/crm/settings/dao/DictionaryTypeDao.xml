@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bjpowernode.crm.settings.dao.DictionaryTypeDao">
+    <!--添加功能-->
+    <insert id="insertDictionaryType">
+        insert into tbl_dic_type
+        values
+        (#{code},#{name},#{description})
+    </insert>
+
+    <!--更新功能-->
+    <update id="update">
+        update tbl_dic_type set
+        name=#{name},description=#{description}
+        where code=#{code}
+    </update>
+
+    <!--批量删除(遍历)-->
+    <delete id="delete">
+        delete from tbl_dic_type
+        where code=#{code}
+    </delete>
+    <!--sql语句批量删除-->
+    <delete id="batchDeleteDictionaryTypeList">
+        delete from tbl_dic_type
+        where code in
+        <foreach collection="array" item="c" separator="," open="(" close=")">
+            #{c}
+        </foreach>
+    </delete>
+
+    <!--查询所有-->
+    <select id="findAllDictionaryType" resultType="com.bjpowernode.crm.settings.domain.DictionaryType">
+        select * from tbl_dic_type
+    </select>
+
+    <!--查询单个-->
+    <select id="findByCode" resultType="com.bjpowernode.crm.settings.domain.DictionaryType">
+        select * from tbl_dic_type where code = #{code}
+    </select>
+
+</mapper>

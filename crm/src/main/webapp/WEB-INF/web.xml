@@ -43,6 +43,11 @@
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
+  
+  <!--自定义加载服务器 缓存数据的监听器-->
+  <listener>
+    <listener-class>com.bjpowernode.crm.listener.SysLoadListener</listener-class>
+  </listener>
 
   <!--注册springmvc的中央调度器-->
   <servlet>

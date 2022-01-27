@@ -1,7 +1,9 @@
 package com.bjpowernode.crm.workbench.service;
 
 import com.bjpowernode.crm.exception.AjaxRequestException;
+import com.bjpowernode.crm.exception.TranditionRequestException;
 import com.bjpowernode.crm.workbench.domain.Activity;
+import com.bjpowernode.crm.workbench.domain.ActivityRemark;
 
 import java.util.List;
 
@@ -82,4 +84,54 @@ public interface ActivityService {
      */
     void batchDeleteActivityByIds(String[] activityIds,String editBy,String editTime) throws AjaxRequestException;
 
+    /**
+     * 批量导入excle文件
+     * @param activityList
+     */
+    void saveActivityList(List<Activity> activityList) throws TranditionRequestException;
+
+    /**
+     * 批量导出
+     * @return
+     */
+    List<Activity> findActivityList();
+
+    /**
+     * 选择导出
+     * @param activityIds
+     * @return
+     */
+    List<Activity> exportActivityByIds(String[] activityIds);
+
+    /**
+     * 根据id查询市场活动并显示在详情页面
+     * @param id
+     * @return
+     */
+    Activity findActivityById(String id);
+
+    /**
+     * 查询备注信息
+     * @return
+     */
+    List<ActivityRemark> findActivityRemarkList(String activityId);
+
+    /**
+     * 新增备注信息
+     * @param activityRemark
+     * @return
+     */
+    boolean saveActivityRemark(ActivityRemark activityRemark);
+
+    /**
+     * 更新备注信息
+     * @param remarkId
+     * @param noteContent
+     * @param editBy
+     * @param editTime
+     * @return
+     */
+    boolean updateRemark(String remarkId, String noteContent, String editBy, String editTime);
+
+    boolean deleteRemarkById(String remarkId);
 }

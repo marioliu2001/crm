@@ -9,9 +9,12 @@ import com.bjpowernode.crm.settings.service.DictionaryTypeService;
 import com.bjpowernode.crm.utils.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description TODO
@@ -101,5 +104,28 @@ public class DictionaryTypeServiceImpl implements DictionaryTypeService {
         if (!flag)
             throw new AjaxRequestException("添加失败,请重试");
         return true;
+    }
+
+    @Override
+    public Map<String, List<DictionaryValue>> findCacheData() {
+
+        Map<String, List<DictionaryValue>> resultMap = new HashMap<>();
+
+        //查询所有的数据字典列表数据
+        List<DictionaryType> dictionaryTypeList = dictionaryTypeDao.findAllDictionaryType();
+
+        //根据每个字典类型编码，查询对应的字典值列表
+        for (DictionaryType dictionaryType : dictionaryTypeList) {
+            String code = dictionaryType.getCode();
+
+            List<DictionaryValue> dictionaryValueList = dictionaryValueDao.findAllByTypeCode(code);
+
+            if (!ObjectUtils.isEmpty(dictionaryValueList))
+                resultMap.put(code+"List",dictionaryValueList);
+
+        }
+
+        //封装到map集合中，返回
+        return resultMap;
     }
 }

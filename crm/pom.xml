@@ -103,6 +103,21 @@
             <version>3.15</version>
         </dependency>
 
+        <!--poi-->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <!--当前POI版本支持2003版本的Excel文件-->
+            <version>4.1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <!--当前POI版本支持2003版本及以上的Excel文件-->
+            <version>4.1.2</version>
+        </dependency>
+
         <!-- 文件上传 -->
         <dependency>
             <groupId>commons-fileupload</groupId>
