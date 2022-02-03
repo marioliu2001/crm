@@ -1,5 +1,10 @@
 package com.bjpowernode.crm.workbench.domain;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
+
+@Data
+@Accessors(chain = true)
 public class TranHistory {
 	
 	private String id;
@@ -9,50 +14,5 @@ public class TranHistory {
 	private String createTime;
 	private String createBy;
 	private String tranId;
-	
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public String getStage() {
-		return stage;
-	}
-	public void setStage(String stage) {
-		this.stage = stage;
-	}
-	public String getMoney() {
-		return money;
-	}
-	public void setMoney(String money) {
-		this.money = money;
-	}
-	public String getExpectedDate() {
-		return expectedDate;
-	}
-	public void setExpectedDate(String expectedDate) {
-		this.expectedDate = expectedDate;
-	}
-	public String getCreateTime() {
-		return createTime;
-	}
-	public void setCreateTime(String createTime) {
-		this.createTime = createTime;
-	}
-	public String getCreateBy() {
-		return createBy;
-	}
-	public void setCreateBy(String createBy) {
-		this.createBy = createBy;
-	}
-	public String getTranId() {
-		return tranId;
-	}
-	public void setTranId(String tranId) {
-		this.tranId = tranId;
-	}
 
-	
-	
 }

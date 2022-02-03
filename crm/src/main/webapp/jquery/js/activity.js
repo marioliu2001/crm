@@ -673,7 +673,7 @@ function getActivityRemarkList() {
                     html += '</div>';
                     html += '</div>';
                     html += '</div>';
-                })
+                });
                 $("#activityRemarkListBody").html(html);
             }else {
                 alert("数据加载异常，请刷新后再试...");

@@ -20,6 +20,6 @@
     </select>
     <select id="findAllByTypeCode" resultType="com.bjpowernode.crm.settings.domain.DictionaryValue">
         select * from tbl_dic_value
-        where typeCode=#{code}
+        where typeCode=#{code} order by orderNo asc
     </select>
 </mapper>

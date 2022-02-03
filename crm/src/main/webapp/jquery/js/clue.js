@@ -189,7 +189,7 @@ function getClueListByPageCondition(pageNo,pageSize) {
                 $.each(data.data,function (i, n) {
                     html += '<tr class="active">';
                     html += '<td><input value="'+n.id+'" type="checkbox" name="ck"/></td>';
-                    html += '<td><a style="text-decoration: none; cursor: pointer;">'+n.fullname+'</a></td>';
+                    html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/clue/toDetail.do?id='+n.id+'\';">'+n.fullname+'</a></td>';
                     html += '<td>'+n.company+'</td>';
                     html += '<td>'+n.phone+'</td>';
                     html += '<td>'+n.mphone+'</td>';
@@ -569,6 +569,388 @@ function batchDeleteClueById() {
     })
 }
 
+/**
+ * 加载线索备注信息
+ */
+function getClueRemarkListBody() {
+    //获取隐藏域中的clue的id
+    var clueId = $("#clueId").val();
+
+    if (clueId==""){
+        alert("当前页面异常，请刷新后再试...");
+        return;
+    }
+
+    //发送ajax请求
+    $.ajax({
+        url:"workbench/clue/getClueRemarkList.do",
+        data:{
+            "clueId":clueId
+        },
+        dataType:"json",
+        type:"POST",
+        success:function (data) {
+            if (data.code==0){
+                //查询成功回显数据
+
+                var html = "";
+
+                $.each(data.data,function (i,n) {
+                        html += '<div class="remarkDiv" style="height: 60px;">';
+                        html += '<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">';
+                        html += '<div style="position: relative; top: -40px; left: 40px;" >';
+                        html += '<h5>'+n.noteContent+'</h5>';
+                        html += '<font color="gray">线索</font> <font color="gray">-</font> <b>'+$("#fullname").val()+''+$("#appellation").val()+'-'+$("#company").val()+'</b> <small style="color: gray;">'+ (n.editFlag==0?n.createTime:n.editTime) +'由'+(n.editFlag==0?n.createBy:n.editBy)+'</small>';
+                        html += '<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">';
+                        html += '<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>';
+                        html += '&nbsp;&nbsp;&nbsp;&nbsp;';
+                        html += '<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>';
+                        html += '</div>';
+                        html += '</div>';
+                        html += '</div>';
+                });
+
+                $("#clueRemarkListBody").html(html);
+            }else {
+                alert("数据异常，请刷新后再试...");
+            }
+        }
+    })
+}
+
+/**
+ * 加载关联的市场活动列表
+ */
+function getActivityRelationList() {
+    //获得clueId
+    var clueId = $("#clueId").val();
+
+    //校验
+    if (clueId==""){
+        alert("当前页面异常，请刷新后再试...");
+        return;
+    }
+
+    //校验通过
+    //发送ajax请求
+    $.ajax({
+        url:"workbench/clue/getActivityRelationList.do",
+        data:{
+            "clueId":clueId
+        },
+        dataType:"json",
+        type:"POST",
+        success:function (data) {
+            if (data.code==0){
+                //查询成功，回显数据
+
+                var html = "";
+
+                $.each(data.data,function (i,n) {
+                    html+= '<tr>';
+                    html+= '<td>'+n.name+'</td>';
+                    html+= '<td>'+n.startDate+'</td>';
+                    html+= '<td>'+n.endDate+'</td>';
+                    html+= '<td>'+n.owner+'</td>';
+                    html+= '<td><a onclick="deleteClueActivityRelation(\''+n.carId+'\')" href="javascript:void(0);"  style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>解除关联</a></td>';
+                    html+= '</tr>';
+                });
+
+                $("#activityRelationListBody").html(html);
+            }
+        }
+    })
+}
+
+/**
+ * 删除关联关系
+ */
+function deleteClueActivityRelation(carId) {
+    if (confirm("您确定要删除当前关联关系吗?")){
+        if (carId == "") {
+            alert("当前数据异常，请刷新页面后重试...");
+            return;
+        }
+        //发送ajax请求
+        $.ajax({
+            url:"workbench/clue/deleteClueActivityRelation.do",
+            data:{
+                "carId":carId
+            },
+            dataType:"json",
+            type:"POST",
+            success:function (data) {
+                if (data.code==0){
+                    //删除成功
+                    //刷新列表
+                    getActivityRelationList();
+                }
+            }
+        })
+    }
+}
+
+/**
+ * 打开关联的模态窗口
+ */ 
+function openBundModal() {
+    $("#openBundModalBtn").click(function () {
+        //发送ajax请求
+        $.ajax({
+            url:"workbench/clue/getActivityUnRelationList.do",
+            data:{
+                "clueId":$("#clueId").val()
+            },
+            dataType:"json",
+            type:"POST",
+            success:function (data) {
+                if (data.code==0){
+                    //查询成功
+                    
+                    //回显数据到模态窗口
+                    loadActivityUnRelationList(data.data);
+
+                    //打开模态窗口
+                    $("#bundModal").modal("show");
+                }
+            }
+        })
+    })
+}
+
+/**
+ * 回显数据
+ * @param data
+ */
+function loadActivityUnRelationList(data) {
+
+    var html = "";
+
+    $.each(data,function (i,n) {
+            html += '<tr>';
+            html += '<td><input value="'+n.id+'" type="checkbox" name="ck"/></td>';
+            html += '<td>'+n.name+'</td>';
+            html += '<td>'+n.startDate+'</td>';
+            html += '<td>'+n.endDate+'</td>';
+            html += '<td>'+n.owner+'</td>';
+            html += '</tr>';
+    });
+
+    $("#activityUnRelationListBody").html(html);
+}
+
+/**
+ * 模糊查询未关联的市场活动
+ */
+function searchActivity() {
+
+    $("#searchActivityInput").keydown(function (event) {
+        //可以根据event事件对象,获取到keyCode,按键对应的编码
+        //console.log("keyCode",event.keyCode);
+        
+        if (event.keyCode==13){
+            //点击了回车
+            var clueId = $("#clueId").val();
+            var activityName = $("#searchActivityInput").val();
+
+            if(clueId == ""){
+                alert("页面加载异常,请刷新后再试...");
+                return;
+            }
+
+            if(activityName == ""){
+                alert("请输入要查询的市场活动名称");
+                return false;
+            }
+
+            //发送ajax请求
+            $.ajax({
+                url: "workbench/clue/searchLikeActivityUnRelationList.do",
+                data: {
+                    "clueId": clueId,
+                    "activityName": activityName
+                },
+                dataType: "json",
+                type: "POST",
+                success: function (data) {
+                    if (data.code == 0) {
+                        //模糊查询成功
+                        loadActivityUnRelationList(data.data);
+                    }
+                }
+            });
+
+            //必须要return false,否则整个的页面会提交,代表阻止页面提交表单
+            return false;
+        }
+    })
+}
+
+/**
+ * 关联操作
+ */
+function saveClueActivityRelation() {
+    $("#saveClueActivityRelationBtn").click(function () {
+        //获取被选中的市场活动id
+        var cks = $("input[name=ck]:checked");
+
+        //获取当前clueId
+        var clueId = $("#clueId").val();
+
+        //校验
+        if (cks.length == 0) {
+            alert("请选中至少一条市场活动进行关联");
+            return;
+        }
+
+
+        if (clueId == "") {
+            alert("当前数据异常，请刷新后再试...");
+            return;
+        }
+
+        //拼接参数
+        var params = "";
+
+        for (var i = 0; i < cks.length; i++) {
+            params += "activityIds="+cks[i].value;
+
+            if (i<cks.length-1)
+                params+="&";
+        }
+
+
+        console.log(params);
+        //发送请求,推荐使用异步方式,没有刷新页面
+        //传统请求,在后台需要重定向跳转到线索详情页面
+        //window.location.href = "workbench/clue/saveClueActivityRelation.do?clueId="+$("#clueId").val()+"&"+params;
+
+        //校验通过
+        //发送ajax请求
+        $.ajax({
+            url:"workbench/clue/saveClueActivityRelation.do?"+params,
+            data:{
+                "clueId":clueId
+            },
+            dataType:"json",
+            type:"POST",
+            success:function (data) {
+                if (data.code==0) {
+                    //添加成功
+                    //刷新页面
+                    getActivityRelationList();
+
+                    //关闭模态窗口
+                    $("#bundModal").modal("hide");
+                }
+            }
+        })
+
+    })
+}
+
+/**
+ * 获取市场活动源
+ */
+function openSearchActivityModal() {
+    //给搜索按钮添加点击事件
+    $("#openSearchActivityModalBtn").click(function () {
+
+        //获取隐藏域中clueId的值
+        var clueId = $("#clueId").val();
+
+        if(clueId == ""){
+            alert("当前页面加载异常,请刷新后再试...");
+            return;
+        }
+
+        //发送ajax请求
+        $.ajax({
+            url:"workbench/clue/getActivityResourceList.do",
+            data:{
+                "clueId":clueId
+            },
+            dataType:"json",
+            type:"POST",
+            success:function (data) {
+                if (data.code == 0) {
+                    //查询成功
+                    //异步加载数据
+
+                    var html = "";
+
+                    $.each(data.data,function (i,n) {
+                            html += '<tr>';
+                            html += '<td><input type="radio" name="activity" value="'+n.id+'"/></td>';
+                            html += '<td id="n_'+n.id+'">'+n.name+'</td>';
+                            html += '<td>'+n.startDate+'</td>';
+                            html += '<td>'+n.endDate+'</td>';
+                            html += '<td>'+n.owner+'</td>';
+                            html += '</tr>';
+                    });
+
+                    $("#activityListBody").html(html);
+
+                    //打开模态窗口
+                    $("#searchActivityModal").modal("show");
+
+                }
+            }
+        })
+    })
+}
+
+/**
+ * 点击关联按钮，将数据回显到只读框中
+ */
+function addRelation() {
+    $("#addRelationBtn").click(function () {
+
+        var act = $("input[name=activity]:checked");
+
+        if (act.length!=1){
+            alert("请选中一条数据...");
+            return;
+        }
+
+        var activityId = act[0].value;
+
+        //将市场活动id，存入到隐藏域中
+
+        $("#activityId").val(activityId);
+
+        //回显市场活动名称到只读框中
+        var activityName = $("#n_" + activityId).html();
+
+        $("#activity").val(activityName);
+
+        //关闭模态窗口
+        $("#searchActivityModal").modal("hide");
+
+    })
+}
+
+/**
+ * 线索转换
+ */
+function clueConvert() {
+
+    $("#convertBtn").click(function () {
+        //线索转换
+        var f = $("#flag").val();
+
+        if (f != ""){
+            //创建交易的线索转换操作
+
+            $("#clueConvertForm").submit();
+        } else {
+            //未创建交易的线索转换操作
+
+            window.location.href="workbench/clue/convert.do?clueId="+$("#clueId").val();
+        }
+    })
+
+}
 function ff() {
     //发送ajax请求
     $.ajax({

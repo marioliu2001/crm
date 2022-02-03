@@ -11,6 +11,14 @@
         values
         (#{id}, #{fullname}, #{appellation}, #{owner}, #{company}, #{job}, #{email}, #{phone}, #{website}, #{mphone}, #{state}, #{source}, #{createBy}, #{createTime}, #{editBy}, #{editTime}, #{description}, #{contactSummary}, #{nextContactTime}, #{address})
     </insert>
+    <insert id="saveClueActivityRelation">
+        insert into tbl_clue_activity_relation
+        (id, clueId, activityId)
+        values
+        <foreach collection="list" item="c" separator=",">
+            (#{c.id},#{c.clueId},#{c.activityId})
+        </foreach>
+    </insert>
     <!--根据id更新操作-->
     <update id="updateClueById">
         update tbl_clue set
@@ -36,6 +44,14 @@
     <!--批量删除操作-->
     <delete id="deleteClueById">
         delete from tbl_clue where id=#{id}
+    </delete>
+    <!--删除关联关系-->
+    <delete id="deleteClueActivityRelation">
+        delete from tbl_clue_activity_relation
+        where id=#{carId}
+    </delete>
+    <delete id="deleteById">
+        delete from tbl_clue where id = #{clueId}
     </delete>
     <select id="findAllClue" resultType="com.bjpowernode.crm.workbench.domain.Clue">
         select
@@ -187,9 +203,129 @@
     </select>
     <!--根据clueId查询一条线索-->
     <select id="getClueByClueId" resultType="com.bjpowernode.crm.workbench.domain.Clue">
-        select * from tbl_clue
-        where id=#{id}
+        select
+        c.id,
+        c.fullname,
+        c.appellation,
+        u.name as owner,
+        c.company,
+        c.job,
+        c.email,
+        c.phone,
+        c.website,
+        c.mphone,
+        c.state,
+        c.source,
+        c.createBy,
+        c.createTime,
+        c.editBy,
+        c.editTime,
+        c.description,
+        c.contactSummary,
+        c.nextContactTime,
+        c.address
+        from tbl_clue c,tbl_user u where c.id = #{id} and c.owner = u.id
     </select>
+    <!--根据id查询线索数据-->
+    <select id="toDetail" resultType="com.bjpowernode.crm.workbench.domain.Clue">
+        select
+        c.id,
+        c.fullname,
+        c.appellation,
+        u.name as owner,
+        c.company,
+        c.job,
+        c.email,
+        c.phone,
+        c.website,
+        c.mphone,
+        c.state,
+        c.source,
+        c.createBy,
+        c.createTime,
+        c.editBy,
+        c.editTime,
+        c.description,
+        c.contactSummary,
+        c.nextContactTime,
+        c.address
+        from tbl_clue c,tbl_user u where c.id = #{id} and c.owner = u.id
+    </select>
+    <!--查询线索备注信息数据-->
+    <select id="getClueRemarkList" resultType="com.bjpowernode.crm.workbench.domain.ClueRemark">
+        select * from tbl_clue_remark
+        where clueId=#{clueId}
+    </select>
+    <!--查询关联的市场活动数据-->
+    <select id="getActivityRelationListMap" resultType="java.util.Map">
+        select
+             a.id,
+             car.id as carId,
+             u.name as owner,
+             a.name,
+             a.startDate,
+             a.endDate,
+             a.cost,
+             a.description,
+             a.createTime,
+             a.createBy,
+             a.editTime,
+             a.editBy,
+             a.isDelete
+        from tbl_activity a,
+             tbl_user u,
+             (select * from tbl_clue_activity_relation where clueId = #{clueId})
+              car
+        where a.owner=u.id and a.id in (car.activityId)
+    </select>
+    <!--查询未关联的市场活动-->
+    <select id="getActivityUnRelationList" resultType="com.bjpowernode.crm.workbench.domain.Activity">
+        select
+             a.id,
+             u.name as owner,
+             a.name,
+             a.startDate,
+             a.endDate,
+             a.cost,
+             a.description,
+             a.createTime,
+             a.createBy,
+             a.editTime,
+             a.editBy,
+             a.isDelete
+        from tbl_activity a,
+             tbl_user u
+             where a.owner = u.id and a.isDelete = '0' and a.id not in
+             (
+             select activityId from tbl_clue_activity_relation where clueId = #{clueId}
+             )
+    </select>
+    <!--模糊查询未关联的市场活动-->
+    <select id="searchLikeActivityUnRelationList" resultType="com.bjpowernode.crm.workbench.domain.Activity">
+        select
+             a.id,
+             u.name as owner,
+             a.name,
+             a.startDate,
+             a.endDate,
+             a.cost,
+             a.description,
+             a.createTime,
+             a.createBy,
+             a.editTime,
+             a.editBy,
+             a.isDelete
+        from tbl_activity a,
+             tbl_user u
+             where a.owner = u.id and a.isDelete = '0' and a.id not in
+             (
+             select activityId from tbl_clue_activity_relation where clueId = #{clueId}
+             )
+             <if test="activityName!=null and activityName!= ''">
+                 and a.name like '%' #{activityName} '%'
+             </if>
+    </select>
+
 </mapper>
 
 

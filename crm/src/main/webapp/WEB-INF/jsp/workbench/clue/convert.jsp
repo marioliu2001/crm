@@ -1,4 +1,5 @@
-﻿<%@ page contentType="text/html;charset=UTF-8" language="java" isELIgnored="false"%>
+﻿<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" isELIgnored="false"%>
 <%
 String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/";
 %>
@@ -16,22 +17,48 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 <link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
+	<script type="text/javascript" src="jquery/js/clue.js"></script>
 
 <script type="text/javascript">
-	$(function(){
-		$("#isCreateTransaction").click(function(){
-			if(this.checked){
-				$("#create-transaction2").show(200);
-			}else{
-				$("#create-transaction2").hide(200);
-			}
-		});
-	});
+    $(function () {
+        $("#isCreateTransaction").click(function () {
+            if (this.checked) {
+                $("#flag").val("a");
+                $("#create-transaction2").show(200);
+            } else {
+                $("#flag").val("");
+                $("#create-transaction2").hide(200);
+            }
+        });
+
+        //加载日历控件
+        initDateTimePicker();
+
+        //加载市场活动源
+        //{1.有关联的，加载返回关联的，2.无关联，返回所有}
+        openSearchActivityModal();
+
+        //点击关联按钮，将数据回显到只读框中
+        addRelation();
+
+        //线索转换操作
+        /*
+            1.未创建交易的线索转换
+            clueId
+            2.创建交易的线索转换
+            clueId flag monry name expectedDate stage activityId
+         */
+
+        clueConvert();
+
+    });
 </script>
 
 </head>
 <body>
-	
+
+	<%--隐藏域中存入clueId--%>
+	<<input type="hidden" id="clueId" value="${clue.id}">
 	<!-- 搜索市场活动的模态窗口 -->
 	<div class="modal fade" id="searchActivityModal" role="dialog" >
 		<div class="modal-dialog" role="document" style="width: 90%;">
@@ -62,8 +89,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 								<td></td>
 							</tr>
 						</thead>
-						<tbody>
-							<tr>
+						<tbody id="activityListBody">
+							<%--<tr>
 								<td><input type="radio" name="activity"/></td>
 								<td>发传单</td>
 								<td>2020-10-10</td>
@@ -76,22 +103,26 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 								<td>2020-10-10</td>
 								<td>2020-10-20</td>
 								<td>zhangsan</td>
-							</tr>
+							</tr>--%>
 						</tbody>
 					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button id="addRelationBtn" type="button" class="btn btn-primary">关联</button>
 				</div>
 			</div>
 		</div>
 	</div>
 
 	<div id="title" class="page-header" style="position: relative; left: 20px;">
-		<h4>转换线索 <small>李四先生-动力节点</small></h4>
+		<h4>转换线索 <small>${clue.fullname}${clue.appellation}-${clue.company}</small></h4>
 	</div>
 	<div id="create-customer" style="position: relative; left: 40px; height: 35px;">
-		新建客户：动力节点
+		新建客户：${clue.company}
 	</div>
 	<div id="create-contact" style="position: relative; left: 40px; height: 35px;">
-		新建联系人：李四先生
+		新建联系人：${clue.fullname}${clue.appellation}
 	</div>
 	<div id="create-transaction1" style="position: relative; left: 40px; height: 35px; top: 25px;">
 		<input type="checkbox" id="isCreateTransaction"/>
@@ -99,24 +130,31 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 	</div>
 	<div id="create-transaction2" style="position: relative; left: 40px; top: 20px; width: 80%; background-color: #F7F7F7; display: none;" >
 	
-		<form>
+		<form method="post" id="clueConvertForm" action="workbench/clue/convert.do?clueId=${clue.id}">
+			<%--市场活动id--%>
+			<input type="hidden" name="activityId" id="activityId">
+			<%--标记--%>
+			<input type="hidden" name="flag" id="flag">
 		  <div class="form-group" style="width: 400px; position: relative; left: 20px;">
 		    <label for="amountOfMoney">金额</label>
-		    <input type="text" class="form-control" id="amountOfMoney">
+		    <input type="text" class="form-control" name="money" id="money">
 		  </div>
 		  <div class="form-group" style="width: 400px;position: relative; left: 20px;">
 		    <label for="tradeName">交易名称</label>
-		    <input type="text" class="form-control" id="tradeName" value="动力节点-">
+		    <input type="text" class="form-control" name="name" id="name">
 		  </div>
 		  <div class="form-group" style="width: 400px;position: relative; left: 20px;">
 		    <label for="expectedClosingDate">预计成交日期</label>
-		    <input type="text" class="form-control" id="expectedClosingDate">
+		    <input type="text" class="form-control time" name="expectedDate" autocomplete="off" id="expectedDate">
 		  </div>
 		  <div class="form-group" style="width: 400px;position: relative; left: 20px;">
 		    <label for="stage">阶段</label>
-		    <select id="stage"  class="form-control">
+		    <select id="stage" name="stage" class="form-control">
 		    	<option></option>
-		    	<option>资质审查</option>
+				<c:forEach items="${stageList}" var="st">
+					<option value="${st.value}">${st.text}</option>
+				</c:forEach>
+		    	<%--<option>资质审查</option>
 		    	<option>需求分析</option>
 		    	<option>价值建议</option>
 		    	<option>确定决策者</option>
@@ -124,11 +162,11 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 		    	<option>谈判/复审</option>
 		    	<option>成交</option>
 		    	<option>丢失的线索</option>
-		    	<option>因竞争丢失关闭</option>
+		    	<option>因竞争丢失关闭</option>--%>
 		    </select>
 		  </div>
 		  <div class="form-group" style="width: 400px;position: relative; left: 20px;">
-		    <label for="activity">市场活动源&nbsp;&nbsp;<a href="javascript:void(0);" data-toggle="modal" data-target="#searchActivityModal" style="text-decoration: none;"><span class="glyphicon glyphicon-search"></span></a></label>
+		    <label for="activity">市场活动源&nbsp;&nbsp;<a id="openSearchActivityModalBtn" href="javascript:void(0);" style="text-decoration: none;"><span class="glyphicon glyphicon-search"></span></a></label>
 		    <input type="text" class="form-control" id="activity" placeholder="点击上面搜索" readonly>
 		  </div>
 		</form>
@@ -137,10 +175,10 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 	
 	<div id="owner" style="position: relative; left: 40px; height: 35px; top: 50px;">
 		记录的所有者：<br>
-		<b>zhangsan</b>
+		<b>${clue.owner}</b>
 	</div>
 	<div id="operation" style="position: relative; left: 40px; height: 35px; top: 100px;">
-		<input class="btn btn-primary" type="button" value="转换">
+		<input id="convertBtn" class="btn btn-primary" type="button" value="转换">
 		&nbsp;&nbsp;&nbsp;&nbsp;
 		<input class="btn btn-default" type="button" value="取消">
 	</div>

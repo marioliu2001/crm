@@ -1,9 +1,14 @@
 package com.bjpowernode.crm.workbench.service;
 
 import com.bjpowernode.crm.exception.AjaxRequestException;
+import com.bjpowernode.crm.exception.TranditionRequestException;
+import com.bjpowernode.crm.workbench.domain.Activity;
 import com.bjpowernode.crm.workbench.domain.Clue;
+import com.bjpowernode.crm.workbench.domain.ClueRemark;
+import com.bjpowernode.crm.workbench.domain.Tran;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ClueService {
     /**
@@ -82,5 +87,58 @@ public interface ClueService {
      * @param clueIds
      */
     void batchDeleteClueById(String[] clueIds) throws AjaxRequestException;
+
+    /**
+     * 根据id查询线索数据（消除笛卡尔积）
+     * @param id
+     * @return
+     */
+    Clue toDetail(String id);
+
+    /**
+     * 根据clueId查询备注信息
+     * @param clueId
+     * @return
+     */
+    List<ClueRemark> getClueRemarkList(String clueId);
+
+    /**
+     * 查询关联的市场活动列表
+     * @param clueId
+     * @return
+     */
+    List<Map<String, String>> getActivityRelationListMap(String clueId);
+
+    /**
+     * 删除关联关系
+     * @param carId
+     * @return
+     */
+    boolean deleteClueActivityRelation(String carId);
+
+    /**
+     * 查询未关联的市场活动
+     * @param clueId
+     * @return
+     */
+    List<Activity> getActivityUnRelationList(String clueId);
+
+    /**
+     * 模糊查询未关联的市场活动
+     * @param clueId
+     * @param activityName
+     * @return
+     */
+    List<Activity> searchLikeActivityUnRelationList(String clueId, String activityName);
+
+    /**
+     * 新增关联关系
+     * @param activityIds
+     * @param clueId
+     * @return
+     */
+    boolean saveClueActivityRelation(String[] activityIds, String clueId);
+
+    void saveConvert(String clueId, String flag, String owner, String createBy, String createTime, Tran tran) throws TranditionRequestException;
 
 }

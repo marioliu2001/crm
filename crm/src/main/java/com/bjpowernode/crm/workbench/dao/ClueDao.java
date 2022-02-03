@@ -1,9 +1,13 @@
 package com.bjpowernode.crm.workbench.dao;
 
+import com.bjpowernode.crm.workbench.domain.Activity;
 import com.bjpowernode.crm.workbench.domain.Clue;
+import com.bjpowernode.crm.workbench.domain.ClueActivityRelation;
+import com.bjpowernode.crm.workbench.domain.ClueRemark;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ClueDao {
 
@@ -40,4 +44,22 @@ public interface ClueDao {
     boolean updateClueById(Clue clue);
 
     boolean deleteClueById(String id);
+
+    Clue toDetail(String id);
+
+    List<ClueRemark> getClueRemarkList(String clueId);
+
+    List<Map<String, String>> getActivityRelationListMap(String clueId);
+
+    boolean deleteClueActivityRelation(String carId);
+
+    List<Activity> getActivityUnRelationList(String clueId);
+
+    List<Activity> searchLikeActivityUnRelationList(@Param("clueId") String clueId,
+                                                    @Param("activityName") String activityName);
+
+
+    boolean saveClueActivityRelation(List<ClueActivityRelation> carList);
+
+    boolean deleteById(String clueId);
 }
